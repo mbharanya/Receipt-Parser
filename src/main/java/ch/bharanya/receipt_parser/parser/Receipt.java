@@ -6,6 +6,11 @@ public class Receipt {
 	private Date date;
 	private double totalPrice;
 
+	public Receipt(final Date date, final double totalPrice) {
+		this.date = date;
+		this.totalPrice = totalPrice;
+	}
+
 	public Date getDate() {
 		return date;
 	}
