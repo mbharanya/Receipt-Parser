@@ -18,14 +18,14 @@ public class ExcelExporter implements IExporter {
 		this.receipt = receipt;
 	}
 
+	@Override
 	public void export() throws IOException {
 		final FileInputStream fis = new FileInputStream(file);
 
 		// Finds the workbook instance for XLSX file
 		final XSSFWorkbook workbook = new XSSFWorkbook(fis);
 
-		// Return first sheet from the XLSX workbook
-		final XSSFSheet mySheet = workbook.getSheet(ExcelUtil.getSheetName(receipt));
+		final XSSFSheet currentMonthWorkSheet = workbook.getSheet(ExcelUtil.getSheetName(receipt));		
 
 		workbook.close();
 	}
