@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.mail.BodyPart;
 import javax.mail.Folder;
@@ -27,32 +26,35 @@ public class CoopImapMailRetriever {
 
 	public List<File> getPdfReceipts() throws MessagingException, IOException {
 		List<File> attachments = new ArrayList<>();
-			final Session session = Session.getDefaultInstance(Config.getInstance().getProperties(), null);
+		final Session session = Session.getDefaultInstance(Config.getInstance().getProperties(), null);
 
-			final Store store = session.getStore(MAIL_STORE_TYPE);
+		final Store store = session.getStore(MAIL_STORE_TYPE);
 
-			final String host = Config.getInstance().getCredentialProperty("coop.mail.imap.host");
-			final String username = Config.getInstance().getCredentialProperty("coop.mail.imap.username");
-			final String password = Config.getInstance().getCredentialProperty("coop.mail.imap.password");
+		final String host = Config.getInstance().getCredentialProperty("coop.mail.imap.host");
+		final String username = Config.getInstance().getCredentialProperty("coop.mail.imap.username");
+		final String password = Config.getInstance().getCredentialProperty("coop.mail.imap.password");
 
-			store.connect(host, username, password);
+		store.connect(host, username, password);
 
-			final Folder inbox = store.getFolder(INBOX_FOLDER_NAME);
-			inbox.open(Folder.READ_ONLY);
-			final List<Message> messages = Arrays.asList(inbox.getMessages());
+		final Folder inbox = store.getFolder(INBOX_FOLDER_NAME);
+		inbox.open(Folder.READ_ONLY);
+		final List<Message> messages = Arrays.asList(inbox.getMessages());
+		
 
-			final List<Message> validMessages = messages.stream().filter(message -> {
-				try {
-					return message.getSubject().contains(Config.getInstance().getProperty("coop.email.subjectQualifier"));
-				} catch (final MessagingException msge) {
-					msge.printStackTrace();
+		List<Message> validMessages = new ArrayList<>();
+		
+		for (Message message : messages){
+			if (message != null ){
+				String messageSubject = message.getSubject();
+				if (messageSubject != null && messageSubject.contains(Config.getInstance().getProperty("coop.email.subjectQualifier"))){
+					validMessages.add( message );
 				}
-				return false;
-			}).collect(Collectors.toList());
+			}
+		}
 
-			attachments = getAttachments(validMessages);
-			inbox.close(true);
-			store.close();
+		attachments = getAttachments(validMessages);
+		inbox.close(true);
+		store.close();
 
 		
 		return attachments;

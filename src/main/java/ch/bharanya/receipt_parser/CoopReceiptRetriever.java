@@ -21,7 +21,7 @@ public class CoopReceiptRetriever implements IReceiptRetriever{
 		try
 		{
 			List<File> pdfReceipts = mailRetriever.getPdfReceipts();
-			pdfReceipts.parallelStream().forEach( pdfReceipt ->  {
+			for (File pdfReceipt : pdfReceipts){
 				IReceiptParser parser = new CoopPdfReceiptParser( pdfReceipt );
 				try
 				{
@@ -32,8 +32,7 @@ public class CoopReceiptRetriever implements IReceiptRetriever{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			});
-			
+			}			
 		}
 		catch ( MessagingException e )
 		{
