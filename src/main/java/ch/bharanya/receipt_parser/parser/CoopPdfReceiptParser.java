@@ -11,8 +11,15 @@ import java.util.regex.Pattern;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CoopPdfReceiptParser implements IReceiptParser {
+	/**
+	 * <p>The {@link Logger} for this class.</p>
+	 */
+	private static final Logger LOG = LoggerFactory.getLogger( CoopPdfReceiptParser.class ); 
+	
 	private static final String DATE_FORMAT = "dd.MM.yy HH:mm";
 	private static final String TOTAL_PRICE_REGEX = "(Total CHF )(.*)";
 	private static final int TOTAL_PRICE_REGEX_MATCH_GROUP = 2;
@@ -34,6 +41,7 @@ public class CoopPdfReceiptParser implements IReceiptParser {
 			readText();
 			closeFile();
 		} catch (final IOException e) {
+			LOG.error( "Error parsing coop pdf" );
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -50,6 +58,7 @@ public class CoopPdfReceiptParser implements IReceiptParser {
 
 	private void loadFile() throws ReceiptParserException {
 		try {
+			LOG.info( "Loading file {} to parse", pdfFile.getName() );
 			document = PDDocument.load(pdfFile);
 		} catch (final Exception e) {
 			throw new ReceiptParserException("can't load pdf", e);
