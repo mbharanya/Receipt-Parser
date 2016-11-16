@@ -18,8 +18,16 @@ import javax.mail.Session;
 import javax.mail.Store;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CoopImapMailRetriever {
+	/**
+	 * <p>
+	 * The {@link Logger} for this class.
+	 * </p>
+	 */
+	private static final Logger LOG = LoggerFactory.getLogger(CoopImapMailRetriever.class);
 
 	private static final String INBOX_FOLDER_NAME = "inbox";
 	private static final String MAIL_STORE_TYPE = "imaps";
@@ -34,29 +42,31 @@ public class CoopImapMailRetriever {
 		final String username = Config.getInstance().getCredentialProperty("coop.mail.imap.username");
 		final String password = Config.getInstance().getCredentialProperty("coop.mail.imap.password");
 
+		LOG.info("Connecting to host {} with user {}", host, username);
 		store.connect(host, username, password);
 
 		final Folder inbox = store.getFolder(INBOX_FOLDER_NAME);
 		inbox.open(Folder.READ_ONLY);
 		final List<Message> messages = Arrays.asList(inbox.getMessages());
-		
 
-		List<Message> validMessages = new ArrayList<>();
-		
-		for (Message message : messages){
-			if (message != null ){
-				String messageSubject = message.getSubject();
-				if (messageSubject != null && messageSubject.contains(Config.getInstance().getProperty("coop.email.subjectQualifier"))){
-					validMessages.add( message );
+		final List<Message> validMessages = new ArrayList<>();
+
+		for (final Message message : messages) {
+			if (message != null) {
+				final String messageSubject = message.getSubject();
+				if (messageSubject != null && messageSubject.contains(Config.getInstance().getProperty("coop.email.subjectQualifier"))) {
+					validMessages.add(message);
 				}
 			}
 		}
 
+		LOG.info("Found {} qualifying messages containing {}", validMessages.size(), Config.getInstance().getProperty("coop.email.subjectQualifier"));
+
 		attachments = getAttachments(validMessages);
+		
 		inbox.close(true);
 		store.close();
 
-		
 		return attachments;
 	}
 

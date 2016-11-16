@@ -12,30 +12,25 @@ import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class App {
 	/**
-	 * <p>The {@link Logger} for this class.</p>
+	 * <p>
+	 * The {@link Logger} for this class.
+	 * </p>
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger( App.class ); 
-	
-	
+	private static final Logger LOG = LoggerFactory.getLogger(App.class);
+
 	public static void main(final String[] args) throws IOException {
-		App app = new App();
+		final App app = new App();
 		app.init();
 	}
 
-	private void init () throws IOException
-	{
-		ReceiptRetrieverPool retrieverPool = new ReceiptRetrieverPool(
-				new CoopReceiptRetriever()
-		);
-		List<Receipt> receipts = retrieverPool.getAllReceiptsFromAllRetrievers();
+	private void init() throws IOException {
+		final ReceiptRetrieverPool retrieverPool = new ReceiptRetrieverPool(new CoopReceiptRetriever());
+		final List<Receipt> receipts = retrieverPool.getAllReceiptsFromAllRetrievers();
 		LOG.info("Found {} receipts", receipts.size());
-		
-		ExporterPool exporterPool = new ExporterPool(
-			new ExcelExporter( new File(Config.getInstance().getProperty( "coop.export.file" )), receipts )
-		);
-		
 
-			
+		final ExporterPool exporterPool = new ExporterPool(new ExcelExporter(new File(Config.getInstance().getProperty("coop.export.file")), receipts));
+
 		exporterPool.executeExporters();
+		LOG.info("Done!");
 	}
 }
