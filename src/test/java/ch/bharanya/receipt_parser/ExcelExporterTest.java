@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import ch.bharanya.receipt_parser.export.ExcelExporter;
+import ch.bharanya.receipt_parser.export.IExporter;
 import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class ExcelExporterTest {

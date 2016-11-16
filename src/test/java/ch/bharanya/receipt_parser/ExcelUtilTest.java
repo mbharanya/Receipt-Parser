@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import ch.bharanya.receipt_parser.export.ExcelUtil;
 import ch.bharanya.receipt_parser.parser.Receipt;
 import junit.framework.Assert;
 
