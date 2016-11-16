@@ -19,6 +19,9 @@ public class CoopPdfReceiptParser implements IReceiptParser {
 	// horrible way to match the date
 	private static final String DATE_REGEX = "[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}\\s[0-9]{2}\\:[0-9]{2}";
 	private static final int DATE_REGEX_MATCH_GROUP = 0;
+	private static final String LOCATION_FILENAME_REGEX = "(Coop\\sSupermarkt)_([a-zA-Z]+)_";
+	private static final int LOCATION_FILENAME_REGEX_MATCH_GROUP = 2;
+
 
 	PDDocument document;
 	File pdfFile;
@@ -40,7 +43,8 @@ public class CoopPdfReceiptParser implements IReceiptParser {
 	{
 		return new CoopReceipt(
 			getDate(),
-			getTotalPrice()
+			getTotalPrice(),
+			getLocation()
 		);
 	}
 
@@ -88,6 +92,21 @@ public class CoopPdfReceiptParser implements IReceiptParser {
 			throw new ReceiptParserException("General Parsing error", ise);
 		} catch (final ParseException pe) {
 			throw new ReceiptParserException("Couldn't convert matched String to Date", pe);
+		}
+	}
+	
+	private String getLocation() throws ReceiptParserException{
+		String fileName = pdfFile.getName();
+		final Pattern pattern = Pattern.compile(LOCATION_FILENAME_REGEX);
+		final Matcher matcher = pattern.matcher(fileName);
+		try {
+			if (matcher.find()) {
+				return matcher.group(LOCATION_FILENAME_REGEX_MATCH_GROUP);
+			} else {
+				throw new ReceiptParserException("No location found");
+			}
+		} catch (final IllegalStateException ise) {
+			throw new ReceiptParserException("General Parsing error", ise);
 		}
 	}
 

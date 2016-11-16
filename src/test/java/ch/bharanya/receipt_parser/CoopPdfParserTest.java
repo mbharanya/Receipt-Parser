@@ -10,11 +10,13 @@ import java.util.Date;
 import org.junit.Test;
 
 import ch.bharanya.receipt_parser.parser.CoopPdfReceiptParser;
+import ch.bharanya.receipt_parser.parser.CoopReceipt;
 import ch.bharanya.receipt_parser.parser.IReceiptParser;
+import ch.bharanya.receipt_parser.parser.ReceiptParserException;
 import junit.framework.Assert;
 
 public class CoopPdfParserTest {
-	private static final String RECEIPT_FILENAME = "U:\\Work\\Receipt Parser\\Coop Supermarkt_Gerlafingen_20161112_1533.pdf";
+	private static final String RECEIPT_FILENAME = "Coop Supermarkt_Gerlafingen_20161112_1533.pdf";
 
 	IReceiptParser parser = new CoopPdfReceiptParser(new File(RECEIPT_FILENAME));
 
@@ -35,5 +37,12 @@ public class CoopPdfParserTest {
 		dateExpected = df.parse(dateExpectedString);
 
 		Assert.assertEquals(dateExpected, date);
+	}
+	
+	@Test
+	public void testGetLocation() throws ReceiptParserException{
+		CoopReceipt receipt = (CoopReceipt) parser.getReceipt();
+		Assert.assertEquals( "Gerlafingen", receipt.getLocation());
+		
 	}
 }
