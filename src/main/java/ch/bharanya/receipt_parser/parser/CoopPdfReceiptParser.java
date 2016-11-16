@@ -26,20 +26,29 @@ public class CoopPdfReceiptParser implements IReceiptParser {
 
 	public CoopPdfReceiptParser(final File file) {
 		this.pdfFile = file;
-		loadFile();
 		try {
+			loadFile();
 			readText();
+			closeFile();
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	public Receipt getReceipt () throws ReceiptParserException
+	{
+		return new CoopReceipt(
+			getDate(),
+			getTotalPrice()
+		);
+	}
 
-	private void loadFile() {
+	private void loadFile() throws ReceiptParserException {
 		try {
 			document = PDDocument.load(pdfFile);
 		} catch (final Exception e) {
-			throw new PdfParserException("can't load pdf", e);
+			throw new ReceiptParserException("can't load pdf", e);
 		}
 
 	}
@@ -47,25 +56,24 @@ public class CoopPdfReceiptParser implements IReceiptParser {
 	private void readText() throws IOException {
 		final PDFTextStripper stripper = new PDFTextStripper();
 		allText = stripper.getText(document);
-		closeFile();
 	}
 
-	public double getTotalPrice() {
+	private double getTotalPrice() throws ReceiptParserException {
 		final Pattern pattern = Pattern.compile(TOTAL_PRICE_REGEX);
 		final Matcher matcher = pattern.matcher(allText);
 		try {
 			if (matcher.find()) {
 				return Double.parseDouble(matcher.group(TOTAL_PRICE_REGEX_MATCH_GROUP));
 			} else {
-				throw new PdfParserException("No total price found");
+				throw new ReceiptParserException("No total price found");
 			}
 		} catch (final IllegalStateException ise) {
-			throw new PdfParserException("General Parsing error", ise);
+			throw new ReceiptParserException("General Parsing error", ise);
 		}
 	}
 
 	// TODO: refactor redundant matching code
-	public Date getDate() {
+	private Date getDate() throws ReceiptParserException {
 		final Pattern pattern = Pattern.compile(DATE_REGEX);
 		final Matcher matcher = pattern.matcher(allText);
 		final DateFormat df = new SimpleDateFormat(DATE_FORMAT);
@@ -74,12 +82,12 @@ public class CoopPdfReceiptParser implements IReceiptParser {
 			if (matcher.find()) {
 				return df.parse(matcher.group(DATE_REGEX_MATCH_GROUP));
 			} else {
-				throw new PdfParserException("No date found");
+				throw new ReceiptParserException("No date found");
 			}
 		} catch (final IllegalStateException ise) {
-			throw new PdfParserException("General Parsing error", ise);
+			throw new ReceiptParserException("General Parsing error", ise);
 		} catch (final ParseException pe) {
-			throw new PdfParserException("Couldn't convert matched String to Date", pe);
+			throw new ReceiptParserException("Couldn't convert matched String to Date", pe);
 		}
 	}
 

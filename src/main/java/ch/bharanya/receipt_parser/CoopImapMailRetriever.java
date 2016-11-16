@@ -22,12 +22,14 @@ import org.apache.commons.lang3.StringUtils;
 
 public class CoopImapMailRetriever {
 
-	public List<File> getMails() {
+	private static final String INBOX_FOLDER_NAME = "inbox";
+	private static final String MAIL_STORE_TYPE = "imaps";
+
+	public List<File> getPdfReceipts() throws MessagingException, IOException {
 		List<File> attachments = new ArrayList<>();
-		try {
 			final Session session = Session.getDefaultInstance(Config.getInstance().getProperties(), null);
 
-			final Store store = session.getStore("imaps");
+			final Store store = session.getStore(MAIL_STORE_TYPE);
 
 			final String host = Config.getInstance().getCredentialProperty("coop.mail.imap.host");
 			final String username = Config.getInstance().getCredentialProperty("coop.mail.imap.username");
@@ -35,7 +37,7 @@ public class CoopImapMailRetriever {
 
 			store.connect(host, username, password);
 
-			final Folder inbox = store.getFolder("inbox");
+			final Folder inbox = store.getFolder(INBOX_FOLDER_NAME);
 			inbox.open(Folder.READ_ONLY);
 			final List<Message> messages = Arrays.asList(inbox.getMessages());
 
@@ -52,9 +54,7 @@ public class CoopImapMailRetriever {
 			inbox.close(true);
 			store.close();
 
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
+		
 		return attachments;
 	}
 

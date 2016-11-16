@@ -20,13 +20,13 @@ public class CoopPdfParserTest {
 
 	@Test
 	public void testGetTotalPrice() throws IOException {
-		final double totalPrice = parser.getTotalPrice();
+		final double totalPrice = parser.getReceipt().getTotalPrice();
 		Assert.assertEquals(28.40D, totalPrice);
 	}
 
 	@Test
 	public void testGetDate() throws IOException, ParseException {
-		final Date date = parser.getDate();
+		final Date date = parser.getReceipt().getDate();
 		final Date dateExpected;
 
 		final String dateExpectedString = "12.11.16 15:33";
