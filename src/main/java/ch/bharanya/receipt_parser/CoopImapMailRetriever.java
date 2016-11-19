@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -32,6 +36,7 @@ public class CoopImapMailRetriever {
 
 	private static final String INBOX_FOLDER_NAME = "inbox";
 	private static final String MAIL_STORE_TYPE = "imaps";
+	public static final String ATTACHMENT_DIR = Config.getInstance().getProperty("coop.email.attachmentDir");
 
 	public List<File> getPdfReceipts() throws MessagingException, IOException {
 		List<File> attachments = new ArrayList<>();
@@ -52,7 +57,9 @@ public class CoopImapMailRetriever {
 
 		final List<Message> validMessages = new ArrayList<>();
 
+		//TODO: make configurable
 		final Date yesterday = new Date();
+
 		yesterday.setDate(new Date().getDate() - 2);
 		yesterday.setHours(0);
 		yesterday.setMinutes(0);
@@ -70,7 +77,7 @@ public class CoopImapMailRetriever {
 		LOG.info("Found {} qualifying messages containing {}", validMessages.size(), Config.getInstance().getProperty("coop.email.subjectQualifier"));
 
 		attachments = getAttachments(validMessages);
-		
+
 		inbox.close(true);
 		store.close();
 
@@ -87,7 +94,13 @@ public class CoopImapMailRetriever {
 					continue; // dealing with attachments only
 				}
 				final InputStream is = bodyPart.getInputStream();
-				final File f = new File(Config.getInstance().getProperty("coop.email.attachmentDir") + File.separator + bodyPart.getFileName());
+
+				final String fileName = bodyPart.getFileName();
+				if (doesFileAreadyExist(fileName)) {
+					LOG.info("Skipping {} - already downloaded", fileName);
+					continue;
+				}
+				final File f = new File(ATTACHMENT_DIR + File.separator + fileName);
 				final FileOutputStream fos = new FileOutputStream(f);
 				final byte[] buf = new byte[4096];
 				int bytesRead;
@@ -100,6 +113,22 @@ public class CoopImapMailRetriever {
 
 		}
 		return attachments;
+	}
+
+	private boolean doesFileAreadyExist(final String fileName) {
+		DirectoryStream<Path> directoryStream;
+		try {
+			directoryStream = Files.newDirectoryStream(Paths.get(ATTACHMENT_DIR));
+		} catch (final IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		for (final Path path : directoryStream) {
+			if (path.getFileName().toString().equals(fileName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
