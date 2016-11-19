@@ -7,13 +7,13 @@ public class CoopReceipt extends Receipt {
 	private String location;
 
 
-	public CoopReceipt(final Date date, final double totalPrice) {
-		super(date, totalPrice);
+	public CoopReceipt(final String id, final Date date, final double totalPrice) {
+		super(id, date, totalPrice);
 	}
 	
 	
-	public CoopReceipt(final Date date, final double totalPrice, String location) {
-		super(date, totalPrice);
+	public CoopReceipt(final String id, final Date date, final double totalPrice, final String location) {
+		super(id, date, totalPrice);
 		setLocation( location);
 	}
 
@@ -36,7 +36,7 @@ public class CoopReceipt extends Receipt {
 	/**
 	 * @param location the location to set
 	 */
-	public void setLocation ( String location )
+	public void setLocation ( final String location )
 	{
 		this.location = location;
 	}

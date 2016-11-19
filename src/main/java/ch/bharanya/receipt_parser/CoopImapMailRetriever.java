@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.mail.BodyPart;
@@ -51,9 +52,15 @@ public class CoopImapMailRetriever {
 
 		final List<Message> validMessages = new ArrayList<>();
 
+		final Date yesterday = new Date();
+		yesterday.setDate(new Date().getDate() - 2);
+		yesterday.setHours(0);
+		yesterday.setMinutes(0);
+		yesterday.setSeconds(0);
 		for (final Message message : messages) {
-			if (message != null) {
+			if (message != null && message.getReceivedDate().after(yesterday)) {
 				final String messageSubject = message.getSubject();
+				// TODO: StringUtils
 				if (messageSubject != null && messageSubject.contains(Config.getInstance().getProperty("coop.email.subjectQualifier"))) {
 					validMessages.add(message);
 				}

@@ -11,7 +11,7 @@ import ch.bharanya.receipt_parser.export.IExporter;
 import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class ExcelExporterTest {
-	Receipt receipt = new Receipt(new Date(), 13.37D);
+	Receipt receipt = new Receipt("05904 00378231 003 0001519", new Date(), 13.37D);
 	IExporter exporter = new ExcelExporter(new File("Abrechnig.xlsx"), receipt);
 
 	@Test

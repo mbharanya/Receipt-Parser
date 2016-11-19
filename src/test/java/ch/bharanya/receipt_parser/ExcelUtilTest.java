@@ -14,7 +14,7 @@ public class ExcelUtilTest {
 		final Date testDate = new Date();
 		// 0 indexed ...
 		testDate.setMonth(9);
-		final Receipt receipt = new Receipt(testDate, 15.00);
+		final Receipt receipt = new Receipt("05904 00378231 003 0001519", testDate, 15.00);
 		Assert.assertEquals("Einkaufen Okt", ExcelUtil.getSheetName(receipt));
 	}
 }
