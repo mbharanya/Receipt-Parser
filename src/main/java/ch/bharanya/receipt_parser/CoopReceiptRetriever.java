@@ -15,31 +15,36 @@ import ch.bharanya.receipt_parser.parser.ReceiptParserException;
 public class CoopReceiptRetriever implements IReceiptRetriever{
 	
 	
+	@Override
 	public List<Receipt> getReceipts() {
-		List<Receipt> receipts = new ArrayList<>();
-		CoopImapMailRetriever mailRetriever = new CoopImapMailRetriever();
+		final List<Receipt> receipts = new ArrayList<>();
+		final CoopImapMailRetriever mailRetriever = new CoopImapMailRetriever();
 		try
 		{
-			List<File> pdfReceipts = mailRetriever.getPdfReceipts();
-			for (File pdfReceipt : pdfReceipts){
-				IReceiptParser parser = new CoopPdfReceiptParser( pdfReceipt );
+			final List<File> pdfReceipts = mailRetriever.getPdfReceipts();
+			for (final File pdfReceipt : pdfReceipts){
+				final IReceiptParser parser = new CoopPdfReceiptParser( pdfReceipt );
 				try
 				{
-					receipts.add( parser.getReceipt() );
+					final Receipt receipt = parser.getReceipt();
+					if (!ProcessedReceiptsStore.getInstance().hasReceiptBeenProcessed(receipt)){
+						ProcessedReceiptsStore.getInstance().addProcessedReceipt(receipt);
+						receipts.add( receipt );
+					}
 				}
-				catch ( ReceiptParserException e )
+				catch ( final ReceiptParserException e )
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}			
 		}
-		catch ( MessagingException e )
+		catch ( final MessagingException e )
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		catch ( IOException e )
+		catch ( final IOException e )
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();

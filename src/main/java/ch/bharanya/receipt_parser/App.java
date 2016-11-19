@@ -27,7 +27,7 @@ public class App {
 		final ReceiptRetrieverPool retrieverPool = new ReceiptRetrieverPool(new CoopReceiptRetriever());
 		final List<Receipt> receipts = retrieverPool.getAllReceiptsFromAllRetrievers();
 
-		LOG.info("Found {} receipt(s)", receipts.size());
+		LOG.info("Found {} (new) receipt(s)", receipts.size());
 
 		final ExporterPool exporterPool = new ExporterPool(new ExcelExporter(new File(Config.getInstance().getProperty("coop.export.file")), receipts));
 

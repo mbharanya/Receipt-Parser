@@ -35,14 +35,19 @@ public class Config {
 	}
 
 	private void loadIfNeeded() throws FileNotFoundException, IOException {
-		properties.load(new FileInputStream(new File("config.properties")));
-		credentialProperties.load(new FileInputStream(new File("credentials.properties")));
+		if (properties.isEmpty()) {
+			properties.load(new FileInputStream(new File("config.properties")));
+		}
+
+		if (credentialProperties.isEmpty()) {
+			credentialProperties.load(new FileInputStream(new File("credentials.properties")));
+		}
 	}
 
 	public String getProperty(final String key) {
 		return properties.getProperty(key);
 	}
-	
+
 	public String getCredentialProperty(final String key) {
 		return credentialProperties.getProperty(key);
 	}

@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,11 +17,20 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class ProcessedReceiptsStore {
-	private static final CSVFormat CSV_FORMAT = CSVFormat.EXCEL;
+	/**
+	 * <p>
+	 * The {@link Logger} for this class.
+	 * </p>
+	 */
+	private static final Logger LOG = LoggerFactory.getLogger(ProcessedReceiptsStore.class);
+
+	private static final CSVFormat CSV_FORMAT = CSVFormat.EXCEL.withDelimiter(';');
 	final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
 	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -29,34 +40,55 @@ public class ProcessedReceiptsStore {
 	List<Receipt> processsedReceipts = new ArrayList<>();
 	private File storeFile;
 
-	public ProcessedReceiptsStore() throws IOException {
-		load();
+	private static ProcessedReceiptsStore instance = null;
+
+	private ProcessedReceiptsStore() {
+		// Exists only to defeat instantiation.
 	}
-	
-	private void load() throws IOException {
+
+	public static ProcessedReceiptsStore getInstance() {
+		if (instance == null) {
+			instance = new ProcessedReceiptsStore();
+			try {
+				instance.loadIfNeeded();
+			} catch (final IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return instance;
+	}
+
+	private void loadIfNeeded() throws IOException {
 		storeFile = new File(Config.getInstance().getProperty("store.file"));
-		if (!storeFile.exists()){
+		if (!storeFile.exists()) {
 			storeFile.createNewFile();
 		}
-		final Reader receiptStoreFileReader = new FileReader(storeFile);
-		final CSVParser parser = new CSVParser(receiptStoreFileReader, CSV_FORMAT);
-		parser.forEach(record -> addCSVRecordToProcessedReceipts(record));
-		parser.close();
+		if (processsedReceipts.size() < 1 || Files.lines(storeFile.toPath(), Charset.defaultCharset()).count() < processsedReceipts.size()) {
+			final Reader receiptStoreFileReader = new FileReader(storeFile);
+			final CSVParser parser = new CSVParser(receiptStoreFileReader, CSV_FORMAT);
+			parser.forEach(record -> addCSVRecordToProcessedReceipts(record));
+			parser.close();
+		}
 	}
-	
-	public void addProcessedReceipt(final Receipt receipt){
-		processsedReceipts.add(receipt);
+
+	public void addProcessedReceipt(final Receipt receipt) {
 		try {
-			writeReceiptToFile(receipt);
+			if (!processsedReceipts.contains(receipt)) {
+				processsedReceipts.add(receipt);
+				writeReceiptToFile(receipt);
+			} else {
+				LOG.warn("Already got this record with id {}", receipt.getId());
+			}
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	//TODO: handle open / close better
+	// TODO: handle open / close better
 	private void writeReceiptToFile(final Receipt receipt) throws IOException {
-		final FileWriter fileWriter = new FileWriter(storeFile);
+		final FileWriter fileWriter = new FileWriter(storeFile, true);
 
 		final CSVPrinter csvPrinter = new CSVPrinter(fileWriter, CSV_FORMAT);
 
@@ -65,11 +97,10 @@ public class ProcessedReceiptsStore {
 		values.add(dateFormat.format(receipt.getDate()));
 		values.add(Double.toString(receipt.getTotalPrice()));
 
-		csvPrinter.print(values);
-		csvPrinter.println();
+		csvPrinter.printRecord(values);
 		csvPrinter.close();
 	}
-	
+
 	private void addCSVRecordToProcessedReceipts(final CSVRecord csvRecord) {
 		final String id = csvRecord.get(ID_COL_INDEX);
 		Date date = null;
@@ -79,13 +110,13 @@ public class ProcessedReceiptsStore {
 			e.printStackTrace();
 		}
 		final double totalPrice = Double.valueOf(csvRecord.get(TOTAL_PRICE_COL_INDEX));
-		
-		addProcessedReceipt(new Receipt(id, date, totalPrice));
+
+		processsedReceipts.add(new Receipt(id, date, totalPrice));
 	}
 
-	public boolean hasReceiptBeenProcessed(final Receipt receipt){
+	public boolean hasReceiptBeenProcessed(final Receipt receipt) {
 		for (final Receipt processsedReceipt : processsedReceipts) {
-			if(processsedReceipt.getId().equals(receipt.getId())){
+			if (processsedReceipt.equals(receipt)) {
 				return true;
 			}
 		}
