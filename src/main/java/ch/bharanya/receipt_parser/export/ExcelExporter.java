@@ -19,9 +19,11 @@ import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class ExcelExporter implements IExporter {
 	/**
-	 * <p>The logger for this class.</p>
+	 * <p>
+	 * The logger for this class.
+	 * </p>
 	 */
-	private static Logger LOG = LoggerFactory.getLogger( ExcelExporter.class );
+	private static Logger LOG = LoggerFactory.getLogger(ExcelExporter.class);
 
 	private static final int TOTAL_PRICE_COLUMN_INDEX = Integer.valueOf(Config.getInstance().getProperty("export.excel.totalprice.columnIndex"));
 	private static final int FIRST_DATA_ROW_NUMBER_OFFSET = Integer.valueOf(Config.getInstance().getProperty("export.excel.firstDataRowNumberOffset"));;
@@ -32,47 +34,76 @@ public class ExcelExporter implements IExporter {
 		this.file = fileToBeModified;
 		this.receipts = receipts;
 	}
-	
+
 	public ExcelExporter(final File fileToBeModified, final Receipt receipt) {
 		this.file = fileToBeModified;
 		receipts.add(receipt);
 	}
 
-
 	@Override
 	public void export() throws IOException {
-		if (receipts.size() < 1){
+		if (receipts.size() < 1) {
 			return;
 		}
-		
+
 		final FileInputStream fis = new FileInputStream(file);
 
 		// Finds the workbook instance for XLSX file
 		final XSSFWorkbook workbook = new XSSFWorkbook(fis);
 
-		for (final Receipt receipt : receipts){
+		for (final Receipt receipt : receipts) {
 			final String sheetName = ExcelUtil.getSheetName(receipt);
 			XSSFSheet currentMonthWorkSheet = workbook.getSheet(sheetName);
-			if (currentMonthWorkSheet == null){
-				LOG.info( "Sheet {} was created", sheetName );
-				currentMonthWorkSheet = workbook.createSheet( sheetName );
+			if (currentMonthWorkSheet == null) {
+				LOG.info("Sheet {} was created", sheetName);
+				currentMonthWorkSheet = workbook.createSheet(sheetName);
 			}
-			
-			final Row row = currentMonthWorkSheet.getRow( FIRST_DATA_ROW_NUMBER_OFFSET + receipt.getDate().getDate());
-			final Cell cell = row.createCell( TOTAL_PRICE_COLUMN_INDEX );
-			cell.setCellValue( receipt.getTotalPrice() );
-			LOG.info( "Setting totalprice {} in sheet {} of file {}", receipt.getTotalPrice(), currentMonthWorkSheet.getSheetName(), file.getName());
+
+			final Row row = currentMonthWorkSheet.getRow(FIRST_DATA_ROW_NUMBER_OFFSET + receipt.getDate().getDate());
+
+			updateOrCreateCellValue(row, TOTAL_PRICE_COLUMN_INDEX, receipt.getTotalPrice());
+
+			LOG.info("Adding totalprice [{}] in sheet [{}] of file [{}]", receipt.getTotalPrice(), currentMonthWorkSheet.getSheetName(), file.getName());
 		}
 
-        // open an OutputStream to save written data into XLSX file
-        final FileOutputStream os = new FileOutputStream(file);
-        workbook.write(os);
-        
-        LOG.info( "Writing to file {}", file.getName() );
-        
+		// open an OutputStream to save written data into XLSX file
+		final FileOutputStream os = new FileOutputStream(file);
+		workbook.write(os);
+
+		LOG.info("Writing to file {}", file.getName());
+
 		workbook.close();
 	}
 
+	private void updateOrCreateCellValue(final Row row, final int colIndex, final double cellValue) {
+		Cell cell = row.getCell(colIndex);
+		if (cell == null) {
+			cell = row.createCell(colIndex);
+		}
 
+		switch (cell.getCellTypeEnum()) {
+		case FORMULA:
+			final String existingCellFormula = cell.getCellFormula();
+			cell.setCellFormula(extendCellFormula(existingCellFormula, cellValue));
+			break;
+		case NUMERIC:
+			final double doubleCellValue = cell.getNumericCellValue();
+			cell.setCellFormula(createCellFormula(doubleCellValue, cellValue));
+			break;
+		case BLANK:
+			cell.setCellValue(cellValue);
+			break;
+		default:
+			break;
+		}
+	}
+
+	private String extendCellFormula(final String currentFormula, final double newValue) {
+		return currentFormula + "+" + newValue;
+	}
+
+	private String createCellFormula(final double currentValue, final double newValue) {
+		return currentValue + "+" + newValue;
+	}
 
 }

@@ -39,5 +39,15 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="C:/Users/XMBomb/.m2/repository/org/apache/poi/poi/3.15/poi-3.15.jar" sourcepath="C:/Users/XMBomb/.m2/repository/org/apache/poi/poi/3.15/poi-3.15-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/XMBomb/.m2/repository/org/apache/poi/poi/3.15/poi-3.15-javadoc.jar!/"/>
+			<attribute name="maven.groupId" value="org.apache.poi"/>
+			<attribute name="maven.artifactId" value="poi"/>
+			<attribute name="maven.version" value="3.15"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
