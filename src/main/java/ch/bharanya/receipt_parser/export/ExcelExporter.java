@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.bharanya.receipt_parser.Config;
 import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class ExcelExporter implements IExporter {
@@ -22,8 +23,8 @@ public class ExcelExporter implements IExporter {
 	 */
 	private static Logger LOG = LoggerFactory.getLogger( ExcelExporter.class );
 
-	private static final int TOTAL_PRICE_COLUMN_INDEX = 2;
-	private static final int FIRST_DATA_ROW_NUMBER_OFFSET = 0;
+	private static final int TOTAL_PRICE_COLUMN_INDEX = Integer.valueOf(Config.getInstance().getProperty("export.excel.totalprice.columnIndex"));
+	private static final int FIRST_DATA_ROW_NUMBER_OFFSET = Integer.valueOf(Config.getInstance().getProperty("export.excel.firstDataRowNumberOffset"));;
 	private final File file;
 	private List<Receipt> receipts = new ArrayList<>();
 
@@ -49,22 +50,22 @@ public class ExcelExporter implements IExporter {
 		// Finds the workbook instance for XLSX file
 		final XSSFWorkbook workbook = new XSSFWorkbook(fis);
 
-		for (Receipt receipt : receipts){
-			String sheetName = ExcelUtil.getSheetName(receipt);
+		for (final Receipt receipt : receipts){
+			final String sheetName = ExcelUtil.getSheetName(receipt);
 			XSSFSheet currentMonthWorkSheet = workbook.getSheet(sheetName);
 			if (currentMonthWorkSheet == null){
 				LOG.info( "Sheet {} was created", sheetName );
 				currentMonthWorkSheet = workbook.createSheet( sheetName );
 			}
 			
-			Row row = currentMonthWorkSheet.getRow( FIRST_DATA_ROW_NUMBER_OFFSET + receipt.getDate().getDate());
-			Cell cell = row.createCell( TOTAL_PRICE_COLUMN_INDEX );
+			final Row row = currentMonthWorkSheet.getRow( FIRST_DATA_ROW_NUMBER_OFFSET + receipt.getDate().getDate());
+			final Cell cell = row.createCell( TOTAL_PRICE_COLUMN_INDEX );
 			cell.setCellValue( receipt.getTotalPrice() );
 			LOG.info( "Setting totalprice {} in sheet {} of file {}", receipt.getTotalPrice(), currentMonthWorkSheet.getSheetName(), file.getName());
 		}
 
         // open an OutputStream to save written data into XLSX file
-        FileOutputStream os = new FileOutputStream(file);
+        final FileOutputStream os = new FileOutputStream(file);
         workbook.write(os);
         
         LOG.info( "Writing to file {}", file.getName() );

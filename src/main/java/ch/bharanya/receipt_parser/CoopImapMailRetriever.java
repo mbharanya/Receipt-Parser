@@ -60,7 +60,7 @@ public class CoopImapMailRetriever {
 		//TODO: make configurable
 		final Date yesterday = new Date();
 
-		yesterday.setDate(new Date().getDate() - 2);
+		yesterday.setDate(new Date().getDate() - 1);
 		yesterday.setHours(0);
 		yesterday.setMinutes(0);
 		yesterday.setSeconds(0);

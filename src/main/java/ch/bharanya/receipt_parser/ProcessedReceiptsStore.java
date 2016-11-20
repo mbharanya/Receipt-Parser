@@ -75,6 +75,7 @@ public class ProcessedReceiptsStore {
 	public void addProcessedReceipt(final Receipt receipt) {
 		try {
 			if (!processsedReceipts.contains(receipt)) {
+				LOG.info("Adding receipt with id {} to receipt store", receipt.getId());
 				processsedReceipts.add(receipt);
 				writeReceiptToFile(receipt);
 			} else {

@@ -29,7 +29,7 @@ public class App {
 
 		LOG.info("Found {} (new) receipt(s)", receipts.size());
 
-		final ExporterPool exporterPool = new ExporterPool(new ExcelExporter(new File(Config.getInstance().getProperty("coop.export.file")), receipts));
+		final ExporterPool exporterPool = new ExporterPool(new ExcelExporter(new File(Config.getInstance().getProperty("export.excel.file")), receipts));
 
 		exporterPool.executeExporters();
 		LOG.info("Done!");
