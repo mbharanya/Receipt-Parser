@@ -12,32 +12,36 @@ import ch.bharanya.receipt_parser.parser.IReceiptParser;
 import ch.bharanya.receipt_parser.parser.Receipt;
 import ch.bharanya.receipt_parser.parser.ReceiptParserException;
 
-public class CoopReceiptRetriever implements IReceiptRetriever{
-	
-	
+public class CoopReceiptRetriever implements IReceiptRetriever
+{
+
 	@Override
-	public List<Receipt> getReceipts() {
+	public List<Receipt> getReceipts ()
+	{
 		final List<Receipt> receipts = new ArrayList<>();
 		final CoopImapMailRetriever mailRetriever = new CoopImapMailRetriever();
 		try
 		{
 			final List<File> pdfReceipts = mailRetriever.getPdfReceipts();
-			for (final File pdfReceipt : pdfReceipts){
-				final IReceiptParser parser = new CoopPdfReceiptParser( pdfReceipt );
-				try
+			final IReceiptParser parser = new CoopPdfReceiptParser( pdfReceipts );
+			try
+			{
+				final List<Receipt> parsedReceipts = parser.getReceipts();
+				for ( Receipt parsedReceipt : parsedReceipts )
 				{
-					final Receipt receipt = parser.getReceipt();
-					if (!ProcessedReceiptsStore.getInstance().hasReceiptBeenProcessed(receipt)){
-						ProcessedReceiptsStore.getInstance().addProcessedReceipt(receipt);
-						receipts.add( receipt );
+					if ( !ProcessedReceiptsStore.getInstance().hasReceiptBeenProcessed( parsedReceipt ) )
+					{
+						ProcessedReceiptsStore.getInstance().addProcessedReceipt( parsedReceipt );
+						receipts.add( parsedReceipt );
 					}
 				}
-				catch ( final ReceiptParserException e )
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}			
+
+			}
+			catch ( final ReceiptParserException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		catch ( final MessagingException e )
 		{

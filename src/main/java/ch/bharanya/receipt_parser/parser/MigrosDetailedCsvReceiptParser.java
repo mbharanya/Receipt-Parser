@@ -16,15 +16,15 @@ import org.apache.commons.csv.CSVRecord;
 
 import ch.bharanya.receipt_parser.Config;
 
-public class MigrosCsvReceiptParser implements IReceiptParser
+public class MigrosDetailedCsvReceiptParser implements IReceiptParser
 {
 	private static final CSVFormat CSV_FORMAT = CSVFormat.EXCEL.withDelimiter(';');
 	private static final String DATE_FORMAT = "MM.dd.YYYY HH:mm";
 	private File file;
 	private List<MigrosReceiptElement> receiptElements = new ArrayList<>();
-	private MigrosReceipt receipt;
+	private List<Receipt> receipts;
 
-	public MigrosCsvReceiptParser (File file)
+	public MigrosDetailedCsvReceiptParser (File file)
 	{
 		this.file = file;
 		try
@@ -81,10 +81,10 @@ public class MigrosCsvReceiptParser implements IReceiptParser
 	}
 
 	@Override
-	public Receipt getReceipt () throws ReceiptParserException
+	public List<Receipt> getReceipts () throws ReceiptParserException
 	{
-		receipt.setReceiptElements( receiptElements );
-		return receipt;
+		receipts.add( new MigrosReceipt( receiptElements ));;
+		return receipts;
 	}
 
 }

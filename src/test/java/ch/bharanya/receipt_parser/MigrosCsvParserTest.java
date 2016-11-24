@@ -5,26 +5,24 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 import org.junit.Test;
 
-import ch.bharanya.receipt_parser.parser.CoopPdfReceiptParser;
 import ch.bharanya.receipt_parser.parser.CoopReceipt;
 import ch.bharanya.receipt_parser.parser.IReceiptParser;
+import ch.bharanya.receipt_parser.parser.MigrosOverviewCsvReceiptParser;
 import ch.bharanya.receipt_parser.parser.ReceiptParserException;
 import junit.framework.Assert;
 
-public class CoopPdfParserTest {
-	private static final String RECEIPT_FILENAME = "Coop Supermarkt_Gerlafingen_20161112_1533.pdf";
-
-	IReceiptParser parser = new CoopPdfReceiptParser(Arrays.asList( new File(RECEIPT_FILENAME)));
-
+public class MigrosCsvParserTest
+{
+	IReceiptParser parser = new MigrosOverviewCsvReceiptParser( new File("cumulus-sales-slip-overview.csv") );
+	
 	@Test
 	public void testGetTotalPrice() throws IOException {
 		final double totalPrice = parser.getReceipts().get( 0 ).getTotalPrice();
-		Assert.assertEquals(28.40D, totalPrice);
+		Assert.assertEquals(5.7D, totalPrice);
 	}
 
 	@Test
@@ -32,7 +30,7 @@ public class CoopPdfParserTest {
 		final Date date = parser.getReceipts().get( 0 ).getDate();
 		final Date dateExpected;
 
-		final String dateExpectedString = "12.11.16 15:33";
+		final String dateExpectedString = "22.11.16 12:38";
 		final DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
 
 		dateExpected = df.parse(dateExpectedString);
@@ -43,6 +41,6 @@ public class CoopPdfParserTest {
 	@Test
 	public void testGetLocation() throws ReceiptParserException{
 		CoopReceipt receipt = (CoopReceipt) parser.getReceipts().get( 0 );
-		Assert.assertEquals( "Gerlafingen", receipt.getLocation());
+		Assert.assertEquals( "AA M Biberist", receipt.getLocation());
 	}
 }

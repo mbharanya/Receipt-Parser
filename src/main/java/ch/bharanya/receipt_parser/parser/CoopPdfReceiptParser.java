@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,68 +37,73 @@ public class CoopPdfReceiptParser implements IReceiptParser {
 	private static final int ID_REGEX_MATCH_GROUP = 0;
 
 
-	PDDocument document;
-	File pdfFile;
-	private String allText;
+	List<CoopPdfReceiptParsingData> parsingDatas = new ArrayList<>();
+	
+	private List<Receipt> receipts = new ArrayList<>();
 
-	public CoopPdfReceiptParser(final File file) {
-		this.pdfFile = file;
+	public CoopPdfReceiptParser(final List<File> files) {
 		try {
-			loadFile();
-			readText();
-			closeFile();
+			for (File pdfFile : files){
+				CoopPdfReceiptParsingData parsingData = new CoopPdfReceiptParsingData(pdfFile);
+				parsingData.setDocument( getPDDocument( pdfFile ) );
+				parsingData.setText( getText( parsingData ) );
+				
+				getText (parsingData);
+				parsingDatas.add( parsingData );
+				closeFile(parsingData);
+			}
 		} catch (final IOException e) {
-			LOG.error( "Error parsing coop pdf" );
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error( "Error parsing coop pdf",e );
 		}
 	}
 	
 	@Override
-	public Receipt getReceipt () throws ReceiptParserException
+	public List<Receipt> getReceipts () throws ReceiptParserException
 	{
- 		return new CoopReceipt(
- 			getId(),
-			getDate(),
-			getTotalPrice(),
-			getLocation()
-		);
+		for(CoopPdfReceiptParsingData parsingData : parsingDatas){
+	 		receipts.add( new CoopReceipt(
+	 			getId(parsingData),
+				getDate(parsingData),
+				getTotalPrice(parsingData),
+				getLocation(parsingData)
+			));
+		}
+		return receipts;
 	}
 
-	private void loadFile() throws ReceiptParserException {
+	private PDDocument getPDDocument(File pdfFile) throws ReceiptParserException {
 		try {
 			LOG.info( "Loading file {} to parse", pdfFile.getName() );
-			document = PDDocument.load(pdfFile);
+			return  PDDocument.load(pdfFile);
 		} catch (final Exception e) {
-			throw new ReceiptParserException("can't load pdf", e);
+			throw new ReceiptParserException("can't load pdf "+pdfFile.getName(), e);
 		}
-
 	}
 
-	private void readText() throws IOException {
+	private String getText(CoopPdfReceiptParsingData parsingData) throws IOException {
 		final PDFTextStripper stripper = new PDFTextStripper();
-		allText = stripper.getText(document);
+		return stripper.getText(parsingData.getDocument());
 	}
 	
-	private String getId() throws ReceiptParserException {
-		return getMatchedString(ID_REGEX, ID_REGEX_MATCH_GROUP, allText, "id");
+	private String getId(CoopPdfReceiptParsingData parsingData) throws ReceiptParserException {
+		return getMatchedString(ID_REGEX, ID_REGEX_MATCH_GROUP, parsingData.getText(), "id");
 	}
 
-	private double getTotalPrice() throws ReceiptParserException {
-		return Double.parseDouble(getMatchedString(TOTAL_PRICE_REGEX, TOTAL_PRICE_REGEX_MATCH_GROUP, allText, "price"));
+	private double getTotalPrice(CoopPdfReceiptParsingData parsingData) throws ReceiptParserException {
+		return Double.parseDouble(getMatchedString(TOTAL_PRICE_REGEX, TOTAL_PRICE_REGEX_MATCH_GROUP, parsingData.getText(), "price"));
 	}
 
-	private Date getDate() throws ReceiptParserException {
+	private Date getDate(CoopPdfReceiptParsingData parsingData) throws ReceiptParserException {
 		final DateFormat df = new SimpleDateFormat(DATE_FORMAT);
 		try {
-			return df.parse(getMatchedString(DATE_REGEX, DATE_REGEX_MATCH_GROUP, allText, "date"));
+			return df.parse(getMatchedString(DATE_REGEX, DATE_REGEX_MATCH_GROUP, parsingData.getText(), "date"));
 		} catch (final ParseException pe) {
 			throw new ReceiptParserException("Couldn't convert matched String to Date", pe);
 		}
 	}
 	
-	private String getLocation() throws ReceiptParserException{
-		final String fileName = pdfFile.getName();
+	private String getLocation(CoopPdfReceiptParsingData parsingData) throws ReceiptParserException{
+		final String fileName = parsingData.getFile().getName();
 		return getMatchedString(LOCATION_FILENAME_REGEX, LOCATION_FILENAME_REGEX_MATCH_GROUP, fileName, "location");
 	}
 	
@@ -114,7 +121,8 @@ public class CoopPdfReceiptParser implements IReceiptParser {
 		}
 	}
 
-	private void closeFile() throws IOException {
+	private void closeFile(CoopPdfReceiptParsingData parsingData) throws IOException {
+		PDDocument document = parsingData.getDocument();
 		if (document != null) {
 			document.close();
 		}
