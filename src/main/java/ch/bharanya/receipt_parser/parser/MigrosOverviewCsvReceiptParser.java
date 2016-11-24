@@ -18,10 +18,9 @@ import ch.bharanya.receipt_parser.Config;
 
 public class MigrosOverviewCsvReceiptParser implements IReceiptParser
 {
-	private static final int FIRST_ROW_OFFSET = 1;
 	private List<Receipt> receipts = new ArrayList<>();
 	private File file;
-	private static final CSVFormat CSV_FORMAT = CSVFormat.EXCEL.withDelimiter( ';' );
+	private static final CSVFormat CSV_FORMAT = CSVFormat.EXCEL.withDelimiter( ';' ).withSkipHeaderRecord( true );
 	private static final String DATE_FORMAT = "MM.dd.YYYY HH:mm";
 
 	public MigrosOverviewCsvReceiptParser ( File file )
@@ -41,7 +40,7 @@ public class MigrosOverviewCsvReceiptParser implements IReceiptParser
 	private void loadFile () throws IOException
 	{
 		final Reader fileReader = new FileReader(file);
-		final CSVParser parser = new CSVParser(fileReader, CSV_FORMAT, 0, FIRST_ROW_OFFSET);
+		final CSVParser parser = new CSVParser(fileReader, CSV_FORMAT);
 		
 		parser.forEach(record -> {
 			try
