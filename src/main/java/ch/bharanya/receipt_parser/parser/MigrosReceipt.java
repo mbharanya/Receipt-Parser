@@ -14,7 +14,7 @@ public class MigrosReceipt extends Receipt
 	private double cumulusPoints;
 	private long transactionNumber;
 
-	public MigrosReceipt ( List<MigrosReceiptElement> receiptElements )
+	public MigrosReceipt ( final List<MigrosReceiptElement> receiptElements )
 	{
 		this.receiptElements = receiptElements;
 	}
@@ -55,7 +55,7 @@ public class MigrosReceipt extends Receipt
 	 * @param receiptElements
 	 *            the receiptElements to set
 	 */
-	public void setReceiptElements ( List<MigrosReceiptElement> receiptElements )
+	public void setReceiptElements ( final List<MigrosReceiptElement> receiptElements )
 	{
 		this.receiptElements = receiptElements;
 	}
@@ -72,7 +72,7 @@ public class MigrosReceipt extends Receipt
 	 * @param checkOutNumber
 	 *            the checkOutNumber to set
 	 */
-	public void setCheckOutNumber ( int checkOutNumber )
+	public void setCheckOutNumber ( final int checkOutNumber )
 	{
 		this.checkOutNumber = checkOutNumber;
 	}
@@ -89,7 +89,7 @@ public class MigrosReceipt extends Receipt
 	 * @param cumulusPoints
 	 *            the cumulusPoints to set
 	 */
-	public void setCumulusPoints ( double cumulusPoints )
+	public void setCumulusPoints ( final double cumulusPoints )
 	{
 		this.cumulusPoints = cumulusPoints;
 	}
@@ -98,7 +98,7 @@ public class MigrosReceipt extends Receipt
 	 * @param location
 	 *            the location to set
 	 */
-	public void setLocation ( String location )
+	public void setLocation ( final String location )
 	{
 		this.location = location;
 	}
@@ -108,8 +108,10 @@ public class MigrosReceipt extends Receipt
 		return transactionNumber;
 	}
 
-	public void setTransactionNumber ( long transactionNumber )
+	public void setTransactionNumber ( final long transactionNumber )
 	{
+		// nicer for debugging :)
+		setId(String.valueOf(transactionNumber));
 		this.transactionNumber = transactionNumber;
 	}
 

@@ -14,25 +14,22 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import ch.bharanya.receipt_parser.Config;
-
 public class MigrosOverviewCsvReceiptParser implements IReceiptParser
 {
-	private List<Receipt> receipts = new ArrayList<>();
-	private File file;
-	private static final CSVFormat CSV_FORMAT = CSVFormat.EXCEL.withDelimiter( ';' ).withSkipHeaderRecord( true );
-	private static final String DATE_FORMAT = "MM.dd.YYYY HH:mm";
+	private final List<Receipt> receipts = new ArrayList<>();
+	private final File file;
+	private static final CSVFormat CSV_FORMAT = CSVFormat.EXCEL.withDelimiter( ';' ).withSkipHeaderRecord(true).withHeader(EMigrosOverviewCsvHeader.class);
+	private static final String DATE_FORMAT = "dd.MM.yy HH:mm";
 
-	public MigrosOverviewCsvReceiptParser ( File file )
+	public MigrosOverviewCsvReceiptParser ( final File file )
 	{
 		this.file = file;
 		try
 		{
 			loadFile();
 		}
-		catch ( IOException e )
+		catch ( final IOException e )
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -45,9 +42,9 @@ public class MigrosOverviewCsvReceiptParser implements IReceiptParser
 		parser.forEach(record -> {
 			try
 			{
-				createMigrosReceipt(record);
+				receipts.add(createMigrosReceipt(record));
 			}
-			catch ( ParseException e )
+			catch ( final ParseException e )
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -58,23 +55,37 @@ public class MigrosOverviewCsvReceiptParser implements IReceiptParser
 
 	}
 
-	private void createMigrosReceipt ( CSVRecord record ) throws ParseException
+	private MigrosReceipt createMigrosReceipt ( final CSVRecord record ) throws ParseException
 	{
 		final DateFormat df = new SimpleDateFormat(DATE_FORMAT);
 		
-		MigrosReceipt receipt = new MigrosReceipt();
+		final MigrosReceipt receipt = new MigrosReceipt();
 		
-		String date = record.get( Config.getInstance().getProperty( "migros.parser.csv.overview.dateCol" ));
-		String time = record.get( Config.getInstance().getProperty( "migros.parser.csv.overview.timeCol" ));
-		
+		final String date = record.get( EMigrosOverviewCsvHeader.DATE);
+		final String time = record.get( EMigrosOverviewCsvHeader.TIME);
+
 		receipt.setDate(df.parse( date+" "+time ));
 		
-		receipt.setLocation(Config.getInstance().getProperty("migros.parser.csv.overview.locationCol"));
-		receipt.setCheckOutNumber(Integer.valueOf( Config.getInstance().getProperty("migros.parser.csv.overview.checkOutNumberCol")));
-		receipt.setTransactionNumber(Long.valueOf( Config.getInstance().getProperty("migros.parser.csv.overview.transactionNumberCol")));
-		receipt.setTotalPrice(Double.valueOf( Config.getInstance().getProperty("migros.parser.csv.overview.totalPriceCol")));
-		receipt.setCumulusPoints(Double.valueOf( Config.getInstance().getProperty("migros.parser.csv.overview.cumulusPointsCol")));
+		receipt.setLocation(record.get(EMigrosOverviewCsvHeader.LOCATION));
+		receipt.setCheckOutNumber(Integer.valueOf(record.get( EMigrosOverviewCsvHeader.CHECKOUT_NUMBER)));
+		receipt.setTransactionNumber(Long.valueOf(record.get(EMigrosOverviewCsvHeader.TRANSACTION_NUMBER)));
+		receipt.setTotalPrice(Double.valueOf( record.get(EMigrosOverviewCsvHeader.TOTAL_PRICE)));
+		receipt.setCumulusPoints(Double.valueOf( record.get(EMigrosOverviewCsvHeader.CUMULUS_POINTS)));
 		
+		return receipt;
+
+//		
+//		final String date = record.get( Config.getInstance().getProperty( "migros.parser.csv.overview.dateCol" ));
+//		final String time = record.get( Config.getInstance().getProperty( "migros.parser.csv.overview.timeCol" ));
+//		
+//		receipt.setDate(df.parse( date+" "+time ));
+//		
+//		receipt.setLocation(Config.getInstance().getProperty("migros.parser.csv.overview.locationCol"));
+//		receipt.setCheckOutNumber(Integer.valueOf( Config.getInstance().getProperty("migros.parser.csv.overview.checkOutNumberCol")));
+//		receipt.setTransactionNumber(Long.valueOf( Config.getInstance().getProperty("migros.parser.csv.overview.transactionNumberCol")));
+//		receipt.setTotalPrice(Double.valueOf( Config.getInstance().getProperty("migros.parser.csv.overview.totalPriceCol")));
+//		receipt.setCumulusPoints(Double.valueOf( Config.getInstance().getProperty("migros.parser.csv.overview.cumulusPointsCol")));
+//		
 	}
 
 	@Override

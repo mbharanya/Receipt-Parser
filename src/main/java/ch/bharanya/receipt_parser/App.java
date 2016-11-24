@@ -24,7 +24,7 @@ public class App {
 	}
 
 	private void init() throws IOException {
-		final ReceiptRetrieverPool retrieverPool = new ReceiptRetrieverPool(new CoopReceiptRetriever());
+		final ReceiptRetrieverPool retrieverPool = new ReceiptRetrieverPool(new CoopReceiptRetriever(), new MigrosReceiptRetriever());
 		final List<Receipt> receipts = retrieverPool.getAllReceiptsFromAllRetrievers();
 
 		LOG.info("Found {} (new) receipt(s)", receipts.size());

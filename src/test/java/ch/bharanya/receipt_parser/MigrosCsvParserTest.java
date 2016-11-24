@@ -9,9 +9,9 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import ch.bharanya.receipt_parser.parser.CoopReceipt;
 import ch.bharanya.receipt_parser.parser.IReceiptParser;
 import ch.bharanya.receipt_parser.parser.MigrosOverviewCsvReceiptParser;
+import ch.bharanya.receipt_parser.parser.MigrosReceipt;
 import ch.bharanya.receipt_parser.parser.ReceiptParserException;
 import junit.framework.Assert;
 
@@ -39,8 +39,9 @@ public class MigrosCsvParserTest
 	}
 	
 	@Test
-	public void testGetLocation() throws ReceiptParserException{
-		CoopReceipt receipt = (CoopReceipt) parser.getReceipts().get( 0 );
+	public void testRest() throws ReceiptParserException{
+		final MigrosReceipt receipt = (MigrosReceipt) parser.getReceipts().get( 0 );
 		Assert.assertEquals( "AA M Biberist", receipt.getLocation());
+		Assert.assertEquals("914", receipt.getId());
 	}
 }
