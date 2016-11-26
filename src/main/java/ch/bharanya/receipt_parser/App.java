@@ -30,12 +30,14 @@ public class App {
 
 		LOG.info("Found {} (new) receipt(s)", receipts.size());
 
-		final ExporterPool exporterPool = new ExporterPool(
-			new ExcelExporter(new File(Config.getInstance().getProperty("export.excel.file")), receipts),
-			new PushBulletExporter(receipts)
-		);
+		if (receipts.size() > 0){
+			final ExporterPool exporterPool = new ExporterPool(
+				new ExcelExporter(new File(Config.getInstance().getProperty("export.excel.file")), receipts),
+				new PushBulletExporter(receipts)
+			);
+			exporterPool.executeExporters();
+		}
 
-		exporterPool.executeExporters();
 		LOG.info("Done!");
 	}
 }
