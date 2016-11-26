@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.bharanya.receipt_parser.export.ExcelExporter;
+import ch.bharanya.receipt_parser.export.PushBulletExporter;
 import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class App {
@@ -29,7 +30,10 @@ public class App {
 
 		LOG.info("Found {} (new) receipt(s)", receipts.size());
 
-		final ExporterPool exporterPool = new ExporterPool(new ExcelExporter(new File(Config.getInstance().getProperty("export.excel.file")), receipts));
+		final ExporterPool exporterPool = new ExporterPool(
+			new ExcelExporter(new File(Config.getInstance().getProperty("export.excel.file")), receipts),
+			new PushBulletExporter(receipts)
+		);
 
 		exporterPool.executeExporters();
 		LOG.info("Done!");
