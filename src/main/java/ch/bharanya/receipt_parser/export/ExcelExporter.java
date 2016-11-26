@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -69,6 +70,7 @@ public class ExcelExporter implements IExporter {
 		// open an OutputStream to save written data into XLSX file
 		final FileOutputStream os = new FileOutputStream(file);
 		workbook.write(os);
+		XSSFFormulaEvaluator.evaluateAllFormulaCells(workbook);
 
 		LOG.info("Writing to file {}", file.getName());
 
