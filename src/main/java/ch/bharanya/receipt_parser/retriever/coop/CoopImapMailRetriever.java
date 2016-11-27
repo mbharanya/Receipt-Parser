@@ -1,4 +1,4 @@
-package ch.bharanya.receipt_parser.retriever;
+package ch.bharanya.receipt_parser.retriever.coop;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -60,14 +60,14 @@ public class CoopImapMailRetriever {
 		final List<Message> validMessages = new ArrayList<>();
 
 		//TODO: make configurable
-		final Date yesterday = new Date();
+		final Date firstValidDate = new Date();
 
-		yesterday.setDate(new Date().getDate() - 1);
-		yesterday.setHours(0);
-		yesterday.setMinutes(0);
-		yesterday.setSeconds(0);
+		firstValidDate.setDate(new Date().getDate() - Integer.valueOf(Config.getInstance().getProperty("coop.email.maxAgeInDays")));
+		firstValidDate.setHours(0);
+		firstValidDate.setMinutes(0);
+		firstValidDate.setSeconds(0);
 		for (final Message message : messages) {
-			if (message != null && message.getReceivedDate().after(yesterday)) {
+			if (message != null && message.getReceivedDate().after(firstValidDate)) {
 				final String messageSubject = message.getSubject();
 				// TODO: StringUtils
 				if (messageSubject != null && messageSubject.contains(Config.getInstance().getProperty("coop.email.subjectQualifier"))) {
@@ -122,7 +122,7 @@ public class CoopImapMailRetriever {
 		try {
 			directoryStream = Files.newDirectoryStream(Paths.get(ATTACHMENT_DIR));
 		} catch (final IOException e) {
-			e.printStackTrace();
+			LOG.error("Error searching coop mail directory for already existing receipt files",e);
 			return false;
 		}
 		for (final Path path : directoryStream) {

@@ -6,7 +6,7 @@ import javax.mail.MessagingException;
 
 import org.junit.Test;
 
-import ch.bharanya.receipt_parser.retriever.CoopImapMailRetriever;
+import ch.bharanya.receipt_parser.retriever.coop.CoopImapMailRetriever;
 
 public class ImapMailRetrieverTest {
 	private final CoopImapMailRetriever receiver = new CoopImapMailRetriever();

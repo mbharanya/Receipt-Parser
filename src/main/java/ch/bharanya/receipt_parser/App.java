@@ -12,9 +12,9 @@ import ch.bharanya.receipt_parser.export.excel.ExcelExporter;
 import ch.bharanya.receipt_parser.export.excel.ExporterPool;
 import ch.bharanya.receipt_parser.export.pushbullet.PushBulletExporter;
 import ch.bharanya.receipt_parser.parser.Receipt;
-import ch.bharanya.receipt_parser.retriever.CoopReceiptRetriever;
-import ch.bharanya.receipt_parser.retriever.MigrosReceiptRetriever;
 import ch.bharanya.receipt_parser.retriever.ReceiptRetrieverPool;
+import ch.bharanya.receipt_parser.retriever.coop.CoopReceiptRetriever;
+import ch.bharanya.receipt_parser.retriever.migros.MigrosReceiptRetriever;
 
 public class App {
 	/**
