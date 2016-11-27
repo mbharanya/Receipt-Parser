@@ -1,6 +1,9 @@
-package ch.bharanya.receipt_parser.parser;
+package ch.bharanya.receipt_parser.parser.coop;
 
 import java.util.Date;
+
+import ch.bharanya.receipt_parser.parser.EStore;
+import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class CoopReceipt extends Receipt {
 	private final EStore store = EStore.COOP;

@@ -1,4 +1,4 @@
-package ch.bharanya.receipt_parser.parser;
+package ch.bharanya.receipt_parser.parser.migros;
 
 import java.io.File;
 import java.io.FileReader;
@@ -14,7 +14,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import ch.bharanya.receipt_parser.Config;
+import ch.bharanya.receipt_parser.config.Config;
+import ch.bharanya.receipt_parser.parser.IReceiptParser;
+import ch.bharanya.receipt_parser.parser.Receipt;
+import ch.bharanya.receipt_parser.parser.ReceiptParserException;
 
 public class MigrosDetailedCsvReceiptParser implements IReceiptParser
 {

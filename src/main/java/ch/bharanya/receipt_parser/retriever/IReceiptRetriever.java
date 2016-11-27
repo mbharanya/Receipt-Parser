@@ -1,9 +1,9 @@
-package ch.bharanya.receipt_parser;
+package ch.bharanya.receipt_parser.retriever;
 
 import java.util.List;
 
 import ch.bharanya.receipt_parser.parser.Receipt;
 
-interface IReceiptRetriever {
+public interface IReceiptRetriever {
 	List<Receipt> getReceipts();
 }

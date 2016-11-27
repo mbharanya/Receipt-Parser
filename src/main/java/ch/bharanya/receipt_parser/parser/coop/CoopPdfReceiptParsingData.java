@@ -1,4 +1,4 @@
-package ch.bharanya.receipt_parser.parser;
+package ch.bharanya.receipt_parser.parser.coop;
 
 import java.io.File;
 

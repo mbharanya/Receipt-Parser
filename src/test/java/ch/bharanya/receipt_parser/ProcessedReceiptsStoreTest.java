@@ -2,6 +2,7 @@ package ch.bharanya.receipt_parser;
 
 import org.junit.Test;
 
+import ch.bharanya.receipt_parser.retriever.ProcessedReceiptsStore;
 import junit.framework.Assert;
 
 public class ProcessedReceiptsStoreTest {

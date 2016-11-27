@@ -10,10 +10,10 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import ch.bharanya.receipt_parser.parser.CoopPdfReceiptParser;
-import ch.bharanya.receipt_parser.parser.CoopReceipt;
 import ch.bharanya.receipt_parser.parser.IReceiptParser;
 import ch.bharanya.receipt_parser.parser.ReceiptParserException;
+import ch.bharanya.receipt_parser.parser.coop.CoopPdfReceiptParser;
+import ch.bharanya.receipt_parser.parser.coop.CoopReceipt;
 import junit.framework.Assert;
 
 public class CoopPdfParserTest {

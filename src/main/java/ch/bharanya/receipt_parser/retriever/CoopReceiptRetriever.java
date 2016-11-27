@@ -1,4 +1,4 @@
-package ch.bharanya.receipt_parser;
+package ch.bharanya.receipt_parser.retriever;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,10 +7,10 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 
-import ch.bharanya.receipt_parser.parser.CoopPdfReceiptParser;
 import ch.bharanya.receipt_parser.parser.IReceiptParser;
 import ch.bharanya.receipt_parser.parser.Receipt;
 import ch.bharanya.receipt_parser.parser.ReceiptParserException;
+import ch.bharanya.receipt_parser.parser.coop.CoopPdfReceiptParser;
 
 public class CoopReceiptRetriever implements IReceiptRetriever
 {

@@ -1,4 +1,4 @@
-package ch.bharanya.receipt_parser;
+package ch.bharanya.receipt_parser.retriever;
 
 import java.io.File;
 import java.io.FileReader;
@@ -20,6 +20,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.bharanya.receipt_parser.config.Config;
 import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class ProcessedReceiptsStore {

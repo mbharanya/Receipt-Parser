@@ -1,4 +1,4 @@
-package ch.bharanya.receipt_parser;
+package ch.bharanya.receipt_parser.retriever;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,6 +25,8 @@ import javax.mail.Store;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.bharanya.receipt_parser.config.Config;
 
 public class CoopImapMailRetriever {
 	/**

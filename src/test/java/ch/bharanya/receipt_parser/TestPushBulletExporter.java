@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import ch.bharanya.receipt_parser.export.PushBulletExporter;
+import ch.bharanya.receipt_parser.export.pushbullet.PushBulletExporter;
 import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class TestPushBulletExporter {

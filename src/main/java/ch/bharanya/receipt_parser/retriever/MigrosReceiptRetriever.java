@@ -1,12 +1,13 @@
-package ch.bharanya.receipt_parser;
+package ch.bharanya.receipt_parser.retriever;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.bharanya.receipt_parser.parser.MigrosOverviewCsvReceiptParser;
+import ch.bharanya.receipt_parser.config.Config;
 import ch.bharanya.receipt_parser.parser.Receipt;
 import ch.bharanya.receipt_parser.parser.ReceiptParserException;
+import ch.bharanya.receipt_parser.parser.migros.MigrosOverviewCsvReceiptParser;
 
 public class MigrosReceiptRetriever implements IReceiptRetriever {
 

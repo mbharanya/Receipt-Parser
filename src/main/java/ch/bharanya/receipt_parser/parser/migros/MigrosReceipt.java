@@ -1,10 +1,12 @@
-package ch.bharanya.receipt_parser.parser;
+package ch.bharanya.receipt_parser.parser.migros;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+
+import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class MigrosReceipt extends Receipt
 {

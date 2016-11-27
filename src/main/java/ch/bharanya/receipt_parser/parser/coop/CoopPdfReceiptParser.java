@@ -1,4 +1,4 @@
-package ch.bharanya.receipt_parser.parser;
+package ch.bharanya.receipt_parser.parser.coop;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.bharanya.receipt_parser.parser.IReceiptParser;
+import ch.bharanya.receipt_parser.parser.Receipt;
+import ch.bharanya.receipt_parser.parser.ReceiptParserException;
 
 public class CoopPdfReceiptParser implements IReceiptParser {
 	/**

@@ -1,4 +1,4 @@
-package ch.bharanya.receipt_parser.parser;
+package ch.bharanya.receipt_parser.parser.migros;
 
 public enum EMigrosOverviewCsvHeader {
 	DATE("Datum"),

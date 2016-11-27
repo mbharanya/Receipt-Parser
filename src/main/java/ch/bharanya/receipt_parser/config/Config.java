@@ -1,4 +1,4 @@
-package ch.bharanya.receipt_parser;
+package ch.bharanya.receipt_parser.config;
 
 import java.io.File;
 import java.io.FileInputStream;

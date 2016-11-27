@@ -1,4 +1,4 @@
-package ch.bharanya.receipt_parser.export;
+package ch.bharanya.receipt_parser.export.excel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +15,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.bharanya.receipt_parser.Config;
+import ch.bharanya.receipt_parser.config.Config;
+import ch.bharanya.receipt_parser.export.IExporter;
 import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class ExcelExporter implements IExporter {

@@ -10,9 +10,9 @@ import java.util.Date;
 import org.junit.Test;
 
 import ch.bharanya.receipt_parser.parser.IReceiptParser;
-import ch.bharanya.receipt_parser.parser.MigrosOverviewCsvReceiptParser;
-import ch.bharanya.receipt_parser.parser.MigrosReceipt;
 import ch.bharanya.receipt_parser.parser.ReceiptParserException;
+import ch.bharanya.receipt_parser.parser.migros.MigrosOverviewCsvReceiptParser;
+import ch.bharanya.receipt_parser.parser.migros.MigrosReceipt;
 import junit.framework.Assert;
 
 public class MigrosCsvParserTest
