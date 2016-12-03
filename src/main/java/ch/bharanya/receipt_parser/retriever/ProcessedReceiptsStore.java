@@ -47,33 +47,43 @@ public class ProcessedReceiptsStore {
 		// Exists only to defeat instantiation.
 	}
 
-	public static ProcessedReceiptsStore getInstance() {
+	public static ProcessedReceiptsStore getInstance() throws ProcessedReceiptStoringException {
 		if (instance == null) {
 			instance = new ProcessedReceiptsStore();
-			try {
-				instance.loadIfNeeded();
-			} catch (final IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			instance.loadIfNeeded();
 		}
 		return instance;
 	}
 
-	private void loadIfNeeded() throws IOException {
+	private void loadIfNeeded() throws ProcessedReceiptStoringException {
 		storeFile = new File(Config.getInstance().getProperty("store.file"));
 		if (!storeFile.exists()) {
-			storeFile.createNewFile();
+			try {
+				storeFile.createNewFile();
+			} catch (final IOException e) {
+				throw new ProcessedReceiptStoringException("Couldn't create new store file", e);
+			}
 		}
-		if (processsedReceipts.size() < 1 || Files.lines(storeFile.toPath(), Charset.defaultCharset()).count() < processsedReceipts.size()) {
-			final Reader receiptStoreFileReader = new FileReader(storeFile);
-			final CSVParser parser = new CSVParser(receiptStoreFileReader, CSV_FORMAT);
-			parser.forEach(record -> addCSVRecordToProcessedReceipts(record));
-			parser.close();
+		try {
+			if (processsedReceipts.size() < 1 || Files.lines(storeFile.toPath(), Charset.defaultCharset()).count() < processsedReceipts.size()) {
+				final Reader receiptStoreFileReader = new FileReader(storeFile);
+				final CSVParser parser = new CSVParser(receiptStoreFileReader, CSV_FORMAT);
+				try{
+					parser.forEach(record -> addCSVRecordToProcessedReceipts(record));
+				}catch (final ProcessedReceiptStoringException e){
+					// re-throwing RuntimeException because of lambdas...
+					throw e;
+				}
+				finally{
+					parser.close();
+				}
+			}
+		} catch (final IOException e) {
+			throw new ProcessedReceiptStoringException("Error parsing processed receipt store config file", e);
 		}
 	}
 
-	public void addProcessedReceipt(final Receipt receipt) {
+	public void addProcessedReceipt(final Receipt receipt) throws ProcessedReceiptStoringException {
 		try {
 			if (!processsedReceipts.contains(receipt)) {
 				LOG.info("Adding receipt with id {} to receipt store", receipt.getId());
@@ -83,8 +93,7 @@ public class ProcessedReceiptsStore {
 				LOG.warn("Already got this record with id {}", receipt.getId());
 			}
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ProcessedReceiptStoringException("Error adding new receipt", e);
 		}
 	}
 
@@ -103,13 +112,13 @@ public class ProcessedReceiptsStore {
 		csvPrinter.close();
 	}
 
-	private void addCSVRecordToProcessedReceipts(final CSVRecord csvRecord) {
+	private void addCSVRecordToProcessedReceipts(final CSVRecord csvRecord) throws ProcessedReceiptStoringException {
 		final String id = csvRecord.get(ID_COL_INDEX);
 		Date date = null;
 		try {
 			date = dateFormat.parse(csvRecord.get(DATE_COL_INDEX));
 		} catch (final ParseException e) {
-			e.printStackTrace();
+			throw new ProcessedReceiptStoringException("Couldn't parse date while adding receipt to processed receipts", e);
 		}
 		final double totalPrice = Double.valueOf(csvRecord.get(TOTAL_PRICE_COL_INDEX));
 

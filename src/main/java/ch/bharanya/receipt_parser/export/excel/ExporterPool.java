@@ -5,25 +5,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ch.bharanya.receipt_parser.export.ExportingException;
 import ch.bharanya.receipt_parser.export.IExporter;
 
 public class ExporterPool
 {
-	private List<IExporter> exporters = new ArrayList<>();
+	private final List<IExporter> exporters = new ArrayList<>();
 	
-	public ExporterPool (IExporter... exporters)
+	public ExporterPool (final IExporter... exporters)
 	{
 		this.exporters.addAll( Arrays.asList( exporters ));
 	}
 	
-	public void executeExporters() throws IOException{
-		for ( IExporter exporter : exporters )
+	public void executeExporters() throws ExportingException{
+		for ( final IExporter exporter : exporters )
 		{
-			exporter.export();
+			try {
+				exporter.export();
+			} catch (final IOException e) {
+				throw new ExportingException(e);
+			}
 		}
 	}
 
-	public void addExporter ( IExporter exporter )
+	public void addExporter ( final IExporter exporter )
 	{
 		exporters.add(exporter);
 	}

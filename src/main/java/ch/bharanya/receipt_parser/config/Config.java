@@ -24,11 +24,9 @@ public class Config {
 			try {
 				instance.loadIfNeeded();
 			} catch (final FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new ConfigException("Couldn't find config file", e);
 			} catch (final IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new ConfigException("Error reading configuration", e);
 			}
 		}
 		return instance;

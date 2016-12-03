@@ -7,10 +7,10 @@ import ch.bharanya.receipt_parser.retriever.coop.CoopReceiptRetriever;
 
 public class CoopReceiptRetrieverTest
 {
-	private IReceiptRetriever retriever = new CoopReceiptRetriever();
+	private final IReceiptRetriever retriever = new CoopReceiptRetriever();
 	
 	@Test
-	public void testGetReceipts ()
+	public void testGetReceipts () throws Exception
 	{
 		retriever.getReceipts();
 	}

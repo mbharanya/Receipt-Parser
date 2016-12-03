@@ -13,6 +13,7 @@ public class ExcelUtil {
 		// Send all output to the Appendable object sb
 		final Formatter formatter = new Formatter(sb, Locale.GERMAN);
 
+		//TODO: use from config
 		return formatter.format(SHEET_NAME_TEMPLATE, ReceiptUtil.getMonthYearNameFromReceipt(receipt)).toString();
 	}
 }

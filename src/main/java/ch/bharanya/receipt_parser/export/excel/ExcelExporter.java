@@ -94,6 +94,7 @@ public class ExcelExporter implements IExporter {
 			cell.setCellFormula(createCellFormula(doubleCellValue, cellValue));
 			break;
 		case BLANK:
+			LOG.debug("Setting new cell value {}", cellValue);
 			cell.setCellValue(cellValue);
 			break;
 		default:
@@ -102,10 +103,12 @@ public class ExcelExporter implements IExporter {
 	}
 
 	private String extendCellFormula(final String currentFormula, final double newValue) {
+		LOG.info("Adding {} to existing formula {} - new value: \"{}\"", newValue, currentFormula, currentFormula + "+" + newValue);
 		return currentFormula + "+" + newValue;
 	}
 
 	private String createCellFormula(final double currentValue, final double newValue) {
+		LOG.info("Adding {} to existing value {} - new value: \"{}\"", newValue, currentValue, currentValue + "+" + newValue);
 		return currentValue + "+" + newValue;
 	}
 

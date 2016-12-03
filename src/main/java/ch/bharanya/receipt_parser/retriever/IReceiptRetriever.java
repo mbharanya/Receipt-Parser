@@ -5,5 +5,5 @@ import java.util.List;
 import ch.bharanya.receipt_parser.parser.Receipt;
 
 public interface IReceiptRetriever {
-	List<Receipt> getReceipts();
+	List<Receipt> getReceipts() throws Exception;
 }
