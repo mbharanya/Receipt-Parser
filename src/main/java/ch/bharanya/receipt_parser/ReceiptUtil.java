@@ -6,7 +6,7 @@ import ch.bharanya.receipt_parser.parser.Receipt;
 
 public class ReceiptUtil {
 	
-	public static String getMonthNameFromReceipt(final Receipt receipt){
-		return new SimpleDateFormat("MMM").format(receipt.getDate());
+	public static String getMonthYearNameFromReceipt(final Receipt receipt){
+		return new SimpleDateFormat("MM.YY").format(receipt.getDate());
 	}
 }
