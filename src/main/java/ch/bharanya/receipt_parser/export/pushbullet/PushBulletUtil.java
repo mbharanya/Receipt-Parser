@@ -28,7 +28,8 @@ public class PushBulletUtil {
 				receipts.stream()
 					.map( receipt -> {
 						return "Date: "+receipt.getDate() +"\n"+
-						"Total Price: "+ receipt.getTotalPrice();
+						"Total Price: "+ receipt.getTotalPrice()+"\n"+
+						"Store:" + receipt.getClass();
 					})
 					.collect(Collectors.joining("\n\n"))
 			));

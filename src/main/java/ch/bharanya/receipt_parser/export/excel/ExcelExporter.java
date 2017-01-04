@@ -61,7 +61,11 @@ public class ExcelExporter implements IExporter {
 				currentMonthWorkSheet = workbook.createSheet(sheetName);
 			}
 
-			final Row row = currentMonthWorkSheet.getRow(FIRST_DATA_ROW_NUMBER_OFFSET + receipt.getDate().getDate());
+			final int rownum = FIRST_DATA_ROW_NUMBER_OFFSET + receipt.getDate().getDate();
+			Row row = currentMonthWorkSheet.getRow(rownum);
+			if (row == null){
+				row = currentMonthWorkSheet.createRow(rownum);
+			}
 
 			updateOrCreateCellValue(row, TOTAL_PRICE_COLUMN_INDEX, receipt.getTotalPrice());
 
